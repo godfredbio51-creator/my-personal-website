@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTN Data Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* --- GLOBAL & LOGIN/SIGNUP STYLES (DARK THEME) --- */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0d1a2d; /* Darker blue background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+        /* Container that holds the login/signup forms */
+        #auth-section {
+            display: flex; /* Makes sure only one form shows at a time within this area */
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 360px;
+        }
+        .login-container {
+            background-color: #1a2a43; /* Slightly lighter dark container */
+            padding: 30px;
+            border-radius: 15px;
+            color: #fff;
+            width: 300px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .logo-lock {
+            font-size: 3em;
+            color: #007bff; /* Blue icon color */
+            margin-bottom: 10px;
+        }
+        .login-container h2 {
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+        .input-group {
+            position: relative;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #334466;
+            border-radius: 8px;
+            background-color: #132139;
+            color: #fff;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 40px; 
+            color: #8899aa;
+            font-size: 1em;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            cursor: pointer;
+            color: #8899aa;
+            font-size: 1em;
+        }
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+        }
+        .options-row a, .switch-link-text a {
+            color: #00ff00; /* Green link color */
+            text-decoration: none;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container button i {
+            margin-left: 8px;
+        }
+        .error-message {
+            color: #ff5555;
+            font-size: 0.85em;
+            margin-top: 10px;
+            text-align: left;
+            min-height: 18px;
+        }
+        .switch-link-text {
+            margin-top: 25px;
+            font-size: 0.9em;
+            color: #bbb;
+        }
+
+        /* --- DATA PURCHASE PAGE STYLES (LIGHT/MTN THEME) --- */
+        #purchase-section {
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+            /* Initially hidden */
+            display: none; 
+        }
+        #purchase-section h1 {
+            color: #ffcc00; /* MTN yellow */
+            text-align: center;
+            border-bottom: 2px solid #ffcc00;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .info-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            color: #333;
+        }
+        .transaction-details {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .transaction-details strong {
+            color: #009933; /* MTN green */
+            font-size: 1.1em;
+            margin-right: 15px;
+        }
+        .copy-button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .recipient-input-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e9e9e9;
+            border-radius: 8px;
+        }
+        .recipient-input-container label {
+            color: #333;
+        }
+        .recipient-input-container input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            color: #333;
+        }
+        .data-error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .bundle {
+            margin: 15px 0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bundle h2 {
+            margin: 0;
+            color: #009933;
+            font-size: 1.3em;
+        }
+        .bundle button {
+            background-color: #009933; /* MTN Green */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-section">
+        <div class="login-container" id="login-container">
+            <i class="fas fa-lock logo-lock"></i>
+            <h2>Login to Continue</h2>
+
+            <div class="input-group">
+                <label for="phone-number">Phone Number</label>
+                <i class="fas fa-mobile-alt"></i>
+                <input type="tel" id="phone-number" class="input-field" placeholder="05xxxxxxxx" maxlength="10">
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Password</label>
+                <i class="fas fa-key"></i>
+                <input type="password" id="password" class="input-field" placeholder="Your password">
+                <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('password')"></i>
+            </div>
+
+            <div class="options-row">
+                <div>
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">Remember me</label>
+                </div>
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            <div id="login-error" class="error-message"></div>
+            <button onclick="login()">
+                Login <i class="fas fa-arrow-right"></i>
+            </button>
+            
+            <p class="switch-link-text">Don't have an account? <a href="#" onclick="showSignup()">Sign up</a></p>
+        </div>
+
+        <div class="login-container" id="signup-container" style="display: none;">
+            <i class="fas fa-user-plus logo-lock"></i>
+            <h2>Create Account</h2>
+
+            <div class="input-group">
+                <label for="signup-phone-number">Phone Number</label>
+                <i class="fas fa-mobile-alt"></i>
+                <input type="tel" id="signup-phone-number" class="input-field" placeholder="05xxxxxxxx" maxlength="10">
+            </div>
+            
+            <div class="input-group">
+                <label for="signup-password">Password</label>
+                <i class="fas fa-key"></i>
+                <input type="password" id="signup-password" class="input-field" placeholder="Choose a password">
+                <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('signup-password')"></i>
+            </div>
+
+            <div id="signup-error" class="error-message"></div>
+            <button onclick="signup()">
+                Sign Up <i class="fas fa-user-plus"></i>
+            </button>
+            
+            <p class="switch-link-text">Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+        </div>
+    </div>
+
+    <div id="purchase-section">
+        <h1>AFFORDABLE MTN DATA</h1>
+        
+        <div class="info-header">
+            <p>To finalize your order, transfer the required amount to the number below:</p>
+            <div class="transaction-details">
+                <span id="transaction-number"><strong>0595579775</strong></span>
+                <button class="copy-button" onclick="copyTransactionNumber()">Copy Number</button>
+            </div>
+        </div>
+        
+        <div class="recipient-input-container">
+            <label for="recipient-number">Enter **MTN Recipient Number** for Data Transfer:</label>
+            <input type="tel" id="recipient-number" placeholder="e.g., 024xxxxxxx" maxlength="10">
+            <div id="number-error" class="data-error-message"></div>
+        </div>
+
+        <div class="bundle">
+            <h2>1GB Data Bundle - 5Ghs</h2>
+            <button onclick="purchaseBundle(1, 5)">Purchase</button>
+        </div>
+        <div class="bundle">
+            <h2>2GB Data Bundle - 10Ghs</h2>
+            <button onclick="purchaseBundle(2, 10)">Purchase</button>
+        </div>
+        <div class="bundle">
+            <h2>3GB Data Bundle - 15Ghs</h2>
+            <button onclick="purchaseBundle(3, 15)">Purchase</button>
+        </div>
+        <div class="bundle">
+            <h2>5GB Data Bundle - 25Ghs</h2>
+            <button onclick="purchaseBundle(5, 25)">Purchase</button>
+        </div>
+        <div class="bundle">
+            <h2>10GB Data Bundle - 50Ghs</h2>
+            <button onclick="purchaseBundle(10, 50)">Purchase</button>
+        </div>
+    </div>
+
+    <script>
+        const TRANSACTION_NUMBER = '0595579775';
+
+        /* --- AUTH FUNCTIONS --- */
+
+        function togglePasswordVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            const toggle = field.nextElementSibling;
+            if (field.type === 'password') {
+                field.type = 'text';
+                toggle.classList.remove('fa-eye');
+                toggle.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                toggle.classList.remove('fa-eye-slash');
+                toggle.classList.add('fa-eye');
+            }
+        }
+
+        function isValidPhoneNumber(number) {
+            // Simple validation for a 10-digit number starting with 0
+            return number.length === 10 && number.startsWith('0') && /^\d+$/.test(number);
+        }
+
+        function login() {
+            const phone = document.getElementById('phone-number').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.innerText = '';
+
+            if (!phone || !password) {
+                errorDiv.innerText = 'Please fill in all fields.';
+                return;
+            }
+
+            if (!isValidPhoneNumber(phone)) {
+                errorDiv.innerText = 'Please enter a valid 10-digit phone number (e.g., 05xxxxxxxx).';
+                return;
+            }
+
+            // --- SUCCESS: Replace alert with page transition ---
+            // In a real app: Call API, check credentials, then proceed.
+            // alert(`Login successful for phone number: ${phone}`);
+            showDataPurchasePage();
+        }
+
+        function signup() {
+            const phone = document.getElementById('signup-phone-number').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const errorDiv = document.getElementById('signup-error');
+            errorDiv.innerText = '';
+
+            if (!phone || !password) {
+                errorDiv.innerText = 'Please fill in all fields.';
+                return;
+            }
+
+            if (!isValidPhoneNumber(phone)) {
+                errorDiv.innerText = 'Please enter a valid 10-digit phone number (e.g., 05xxxxxxxx).';
+                return;
+            }
+            
+            if (password.length < 6) {
+                errorDiv.innerText = 'Password must be at least 6 characters long.';
+                return;
+            }
+
+            // --- SUCCESS: Replace alert with page transition ---
+            // In a real app: Call API, register user, then proceed.
+            // alert(`Sign up successful for phone number: ${phone}`);
+            showDataPurchasePage();
+        }
+
+        function showSignup() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('signup-container').style.display = 'block';
+            document.getElementById('login-error').innerText = ''; 
+        }
+
+        function showLogin() {
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('signup-container').style.display = 'none';
+            document.getElementById('signup-error').innerText = ''; 
+        }
+
+        function showDataPurchasePage() {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('purchase-section').style.display = 'block';
+            
+            // Adjust body background color for the new page theme
+            document.body.style.backgroundColor = '#f4f4f4'; 
+            document.body.style.color = '#333';
+            document.body.style.justifyContent = 'flex-start'; // Align content to top
+            document.body.style.alignItems = 'flex-start';
+            document.body.style.height = 'auto'; // Allow content to dictate height
+        }
+        
+        /* --- PURCHASE FUNCTIONS --- */
+
+        function copyTransactionNumber() {
+            const numberElement = document.getElementById('transaction-number');
+            const numberToCopy = numberElement.textContent.trim();
+            const button = document.querySelector('.copy-button');
+
+            navigator.clipboard.writeText(numberToCopy).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 1500);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                alert(`Please manually copy the number: ${numberToCopy}`);
+            });
+        }
+
+        function purchaseBundle(size, price) {
+            const recipientInput = document.getElementById('recipient-number');
+            const recipientNumber = recipientInput.value.trim();
+            const errorDiv = document.getElementById('number-error');
+            errorDiv.textContent = ''; 
+
+            if (recipientNumber === '') {
+                errorDiv.textContent = 'Please enter the recipient number first.';
+                recipientInput.focus();
+                return;
+            }
+            if (recipientNumber.length !== 10 || !/^\d+$/.test(recipientNumber)) {
+                errorDiv.textContent = 'Please enter a valid 10-digit phone number.';
+                recipientInput.focus();
+                return;
+            }
+
+            // Instructions Alert
+            alert(`
+                💸 PURCHASE INSTRUCTIONS 💸
+                
+                1. Transfer ${price} Ghs via Mobile Money (MoMo).
+                   
+                2. Send the funds to the number: 
+                   ${TRANSACTION_NUMBER}
+                   
+                3. Your ${size}GB data bundle will be processed
+                   and sent to the recipient number:
+                   ${recipientNumber}
+                   
+                4. Processing is usually done within minutes after confirmation.
+            `);
+        }
+    </script>
+</body>
+</html>
